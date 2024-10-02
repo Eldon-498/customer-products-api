@@ -9,9 +9,14 @@ class AuthController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function login(Request $request)
     {
-        //
+        $credentials = $request->only('email', 'password');
+
+        if(!$token = auth('api')->attempt($credentials)) {
+
+            return response()->json(['error' => 'Unauthorized Access'], 401);
+        }
     }
 
     /**
