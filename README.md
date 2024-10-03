@@ -1,66 +1,145 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Code Particles customer-products-api
+# Laravel API Setup Instructions
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+This project is a simple Laravel API that implements JWT-based authentication and exposes endpoints for getting customers and products.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Ensure you have the following installed on your system:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **PHP** (version 8.0 or higher)
+- **Composer** - A PHP package manager
+- **MySQL** - A database server
+- **Laravel** (optional, can be installed via Composer)
 
-## Learning Laravel
+## 1. Clone the Repository
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Clone the repository to your local machine using the following command:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+git clone <repository-url>
+cd <repository-folder>
+```
+## 2. Install Deependencies
 
-## Laravel Sponsors
+```
+composer install
+```
+## 3. Environment Configurations
+Open the .env file in your preferred text editor and configure the following database settings
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```
+DB_CONNECTION=mysql
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+```
 
-### Premium Partners
+## 4. Generate Application Key
+```
+php artisan key:generate
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## 5. Run Migrations and Seed the Database
+```
+php artisan key:generate
+```
+This command will create the necessary tables and insert ten fake customers, ten fake products, and a default user with the following credentials:
+- **Username:** admin
+- **Email:** kazi@codeparticles.com
+- **Password:** 1234
 
-## Contributing
+## 6. JWT Authentication
+Ensure that the JWT authentication package (tymon/jwt-auth) is properly configured.
+```
+'guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
+],
+```
+## 7. Accessing the API
+Login Endpoint
+To authenticate and retrieve a JWT token, send a POST request to the following endpoint:
+```
+POST /api/login
+```
+Request Body:
+```
+{
+    "email": "kazi@codeparticles.com",
+    "password": "1234"
+}
+```
+Successful Response:
+```
+{
+    "user": {
+        "id": 1,
+        "name": "admin",
+        "email": "kazi@codeparticles.com"
+    },
+    "access_token": "your_jwt_token_here"
+}
+```
+Unsueccessful Response:
+```
+{
+  "error":"Invalid Credentials"
+}
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+Public Endpoint: View Products
+To access the list of products, send a GET request to:
+```
+GET /api/products
+```
 
-## Code of Conduct
+Sample Response:
+```
+[
+    {
+        "id": 1,
+        "name": "Product 1",
+        "description": "Description of product 1",
+        "price": 100.00
+    },
+    
+]
+```
+Protected Endpoint: View Customers
+To access the list of customers, you must include the JWT token in the Authorization header. Send a GET request to:
+```
+GET /api/customers
+```
+Response:
+```
+[
+    {
+        "id": 1,
+        "name": "Customer 1",
+        "email": "customer1@example.com",
+        "phone_number": "123456789"
+    },
+    ...
+]
+```
+Unsueccessful Response:
+```
+{
+  "error":"Unauthorized access"
+}
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 8. Running the Application
+To run the application, use the following command:
+```
+php artisan serve
+```
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
