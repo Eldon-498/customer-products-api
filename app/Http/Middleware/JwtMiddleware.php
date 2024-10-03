@@ -22,12 +22,8 @@ class JwtMiddleware
 
         try {
             $user = JWTAuth::parseToken()->authenticate();
-        } catch (TokenExpiredException $e) {
-            return response()->json(['error' => 'Token has expired'], 401);
-        } catch (TokenInvalidException $e) {
-            return response()->json(['error' => 'Invalid token'], 401);
-        } catch (JWTException $e) {
-            return response()->json(['error' => 'Token not provided'], 401);
+        } catch (TokenExpiredException | TokenInvalidException | JWTException $e) {
+            return response()->json(['error' => 'Unauthorized access.'], 401);
         }
 
         return $next($request);

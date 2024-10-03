@@ -9,20 +9,35 @@ class AuthController extends Controller
 
     public function login(Request $request): JsonResponse
     {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
         $credentials = $request->only('email', 'password');
 
-        if(!$token = auth('api')->attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
 
-            return response()->json(['error' => 'Unauthorized Access'], 401);
+            return response()->json(['error' => 'Invalid Credentials'], 401);
+        } else {
+
+            $user = auth('api')->user();
+
+            return $this->sendUser($token, $user);
         }
-        return $this->sendToken($token);
+
+
     }
 
-    protected function sendToken($token): JsonResponse
+    protected function sendUser($token, $user): JsonResponse
     {
         return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ],
             'access_token' => $token,
-            'token_type' => 'bearer',
         ]);
     }
 
